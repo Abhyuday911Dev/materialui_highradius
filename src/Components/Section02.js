@@ -1,5 +1,5 @@
 import { Box, Button, Tab, Tabs } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbarQuickFilter } from "@mui/x-data-grid";
 import React, { useState } from "react";
 
 function a11yProps(index) {
@@ -42,7 +42,7 @@ const Section02 = () => {
       field: "COMPANY_CODE",
       headerName: "COMPANY_CODE",
       type: "number",
-      width: 110,
+      width: 170,
       editable: true,
     },
     {
@@ -61,12 +61,44 @@ const Section02 = () => {
   };
 
   const handleDelete = () => {
-    let updatedRows = rows.filter(
-      (row) => !rowSelectionModel.includes(row.id)
-    );
+    let updatedRows = rows.filter((row) => !rowSelectionModel.includes(row.id));
     setrows(updatedRows);
     setRowSelectionModel([]);
   };
+
+  function Toolbar() {
+    return (
+      <Box
+        sx={{
+          p: 0.5,
+          pb: 0,
+        }}
+        display="flex"
+        justifyContent="space-between"
+        alignItems={"center"}
+      >
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="basic tabs example"
+          >
+            <Tab label="HOME PAGE" {...a11yProps(0)} />
+            <Tab label="ADD DATA" {...a11yProps(1)} />
+            <Tab label="ANALYTICS VIEW" {...a11yProps(2)} />
+          </Tabs>
+        </Box>
+        <GridToolbarQuickFilter
+          quickFilterParser={(searchInput) =>
+            searchInput
+              .split(",")
+              .map((value) => value.trim())
+              .filter((value) => value !== "")
+          }
+        />
+      </Box>
+    );
+  }
 
   const Footer = () => {
     return (
@@ -87,6 +119,7 @@ const Section02 = () => {
           sx={{ margin: "0px 0px 20px 8px", backgroundColor: "#fc7500" }}
           variant="contained"
           disabled={rowSelectionModel.length !== 1}
+          onClick={() => alert("ankur chodu gand me bamboo le lo")}
         >
           EDIT
         </Button>
@@ -108,21 +141,7 @@ const Section02 = () => {
   };
 
   return (
-    <Box height={"85vh"} sx={{ padding: "0 7px" }}>
-      <Box display="flex" justifyContent="space-between">
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            aria-label="basic tabs example"
-          >
-            <Tab label="HOME PAGE" {...a11yProps(0)} />
-            <Tab label="ADD DATA" {...a11yProps(1)} />
-            <Tab label="ANALYTICS VIEW" {...a11yProps(2)} />
-          </Tabs>
-        </Box>
-        <Box></Box>
-      </Box>
+    <Box height={"90vh"} sx={{ padding: "0 7px" }}>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -132,17 +151,23 @@ const Section02 = () => {
               pageSize: 10,
             },
           },
+          filter: {
+            filterModel: {
+              items: [],
+              quickFilterValues: [""],
+            },
+          },
         }}
+        // disableColumnFilter
+        // disableColumnSelector
+        // disableDensitySelector
         pageSizeOptions={[10]}
         checkboxSelection
         onRowSelectionModelChange={(newRowSelectionModel) => {
           setRowSelectionModel(newRowSelectionModel);
         }}
         rowSelectionModel={rowSelectionModel}
-        slots={{
-          //   toolbar: GridToolbar,
-          footer: Footer,
-        }}
+        slots={{ toolbar: Toolbar, footer: Footer }}
       />
     </Box>
   );
