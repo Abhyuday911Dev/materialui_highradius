@@ -1,6 +1,7 @@
 import { Box, Button, Tab, Tabs } from "@mui/material";
 import { DataGrid, GridToolbarQuickFilter } from "@mui/x-data-grid";
 import React, { useState } from "react";
+import Modal from "@mui/material/Modal";
 
 function a11yProps(index) {
   return {
@@ -8,6 +9,19 @@ function a11yProps(index) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
+
+const modleStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "4px solid #fc7500",
+  borderRadius: '8px',
+  boxShadow: 24,
+  p: 4,
+};
 
 const Section02 = () => {
   const [value, setValue] = useState(0); // not in use
@@ -23,6 +37,9 @@ const Section02 = () => {
     { id: 8, lastName: "Frances", firstName: "Rossini", COMPANY_CODE: 36 },
     { id: 9, lastName: "Roxie", firstName: "Harvey", COMPANY_CODE: 65 },
   ]);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const columns = [
     { field: "id", headerName: "ID", width: 90 },
@@ -119,7 +136,7 @@ const Section02 = () => {
           sx={{ margin: "0px 0px 20px 8px", backgroundColor: "#fc7500" }}
           variant="contained"
           disabled={rowSelectionModel.length !== 1}
-          onClick={() => alert("ankur chodu gand me bamboo le lo")}
+          onClick={handleOpen}
         >
           EDIT
         </Button>
@@ -142,6 +159,16 @@ const Section02 = () => {
 
   return (
     <Box height={"90vh"} sx={{ padding: "0 7px" }}>
+      <div>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={modleStyle}></Box>
+        </Modal>
+      </div>
       <DataGrid
         rows={rows}
         columns={columns}
