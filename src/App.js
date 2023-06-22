@@ -33,8 +33,7 @@ const App = () => {
         >
           <img src={abc} alt="abc logo" />
           <img src={hrc} alt="abc logo" />
-
-          <Box width="20%"></Box>
+          <img style={{visibility: "hidden"}} src={abc} alt="abc logo" />
         </Box>
         <Box height={"85vh"}>
           <Box display="flex" justifyContent="space-between">
