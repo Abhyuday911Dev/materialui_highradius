@@ -1,7 +1,14 @@
-import { Box, Button, Tab, Tabs } from "@mui/material";
-import { DataGrid, GridToolbarQuickFilter } from "@mui/x-data-grid";
+import { Box, Button, Pagination, Tab, Tabs } from "@mui/material";
+import {
+  DataGrid,
+  GridToolbarQuickFilter,
+  gridPageCountSelector,
+  gridPaginationModelSelector,
+  useGridSelector,
+} from "@mui/x-data-grid";
 import React, { useState } from "react";
 import Modal from "@mui/material/Modal";
+import { useGridApiContext } from "@mui/x-data-grid";
 
 function a11yProps(index) {
   return {
@@ -18,7 +25,7 @@ const modleStyle = {
   width: 400,
   bgcolor: "background.paper",
   border: "4px solid #fc7500",
-  borderRadius: '8px',
+  borderRadius: "8px",
   boxShadow: 24,
   p: 4,
 };
@@ -116,43 +123,63 @@ const Section02 = () => {
       </Box>
     );
   }
+  function CustomPagination() {
+    const apiRef = useGridApiContext();
+    const paginationModel = useGridSelector(
+      apiRef,
+      gridPaginationModelSelector
+    );
+    const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+
+    return (
+      <Pagination
+        count={pageCount}
+        page={paginationModel.page + 1}
+        onChange={(event, value) => apiRef.current.setPage(value - 1)}
+      />
+    );
+  }
 
   const Footer = () => {
     return (
       <div
         style={{
           display: "flex",
-          justifyContent: "flex-start",
+          justifyContent: "space-between",
+          alignItems: "center",
           marginTop: "8px",
         }}
       >
-        <Button
-          sx={{ margin: "0px 0px 20px 15px", backgroundColor: "#fc7500" }}
-          variant="contained"
-        >
-          REFRESH DATA
-        </Button>
-        <Button
-          sx={{ margin: "0px 0px 20px 8px", backgroundColor: "#fc7500" }}
-          variant="contained"
-          disabled={rowSelectionModel.length !== 1}
-          onClick={handleOpen}
-        >
-          EDIT
-        </Button>
-        <Button
-          sx={{ margin: "0px 0px 20px 8px", backgroundColor: "#fc7500" }}
-          variant="contained"
-          onClick={() => handleDelete()}
-        >
-          DELETE
-        </Button>
-        <Button
-          sx={{ margin: "0px 0px 20px 8px", backgroundColor: "#fc7500" }}
-          variant="contained"
-        >
-          PREDICT
-        </Button>
+        <Box pb={2}>
+          <Button
+            sx={{ margin: "0px 0px 0px 15px", backgroundColor: "#fc7500" }}
+            variant="contained"
+          >
+            REFRESH DATA
+          </Button>
+          <Button
+            sx={{ margin: "0px 0px 0px 8px", backgroundColor: "#fc7500" }}
+            variant="contained"
+            disabled={rowSelectionModel.length !== 1}
+            onClick={handleOpen}
+          >
+            EDIT
+          </Button>
+          <Button
+            sx={{ margin: "0px 0px 0px 8px", backgroundColor: "#fc7500" }}
+            variant="contained"
+            onClick={() => handleDelete()}
+          >
+            DELETE
+          </Button>
+          <Button
+            sx={{ margin: "0px 0px 0px 8px", backgroundColor: "#fc7500" }}
+            variant="contained"
+          >
+            PREDICT
+          </Button>
+        </Box>
+        {CustomPagination()}
       </div>
     );
   };
@@ -173,28 +200,23 @@ const Section02 = () => {
         rows={rows}
         columns={columns}
         initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
-            },
-          },
           filter: {
             filterModel: {
               items: [],
               quickFilterValues: [""],
             },
           },
+          pagination: {
+            paginationModel: { pageSize: 1, page: 0 },
+          },
         }}
-        // disableColumnFilter
-        // disableColumnSelector
-        // disableDensitySelector
-        pageSizeOptions={[10]}
         checkboxSelection
         onRowSelectionModelChange={(newRowSelectionModel) => {
           setRowSelectionModel(newRowSelectionModel);
         }}
         rowSelectionModel={rowSelectionModel}
         slots={{ toolbar: Toolbar, footer: Footer }}
+        pagination
       />
     </Box>
   );
