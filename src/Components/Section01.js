@@ -11,6 +11,7 @@ const Section01 = () => {
         display="flex"
         justifyContent="space-between"
         sx={{ padding: "16px 12px" }}
+        width={'100vw'}
       >
         <img src={abc} alt="abc logo" />
         <img src={hrc} alt="abc logo" />
