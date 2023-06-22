@@ -44,8 +44,19 @@ const Section02 = () => {
     { id: 8, lastName: "Frances", firstName: "Rossini", COMPANY_CODE: 36 },
     { id: 9, lastName: "Roxie", firstName: "Harvey", COMPANY_CODE: 65 },
   ]);
+  const [editableid, setEditableid] = useState([]);
+  const [firstName, setFirstName] = useState([]);
+  const [lastname, setLastname] = useState([]);
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+
+    const foundObject = rows.find((obj) => obj.id === rowSelectionModel[0]);
+    setEditableid(foundObject.id);
+    setFirstName(foundObject.firstName);
+    setLastname(foundObject.lastName);
+    setOpen(true);
+  };
+
   const handleClose = () => setOpen(false);
 
   const columns = [
@@ -185,18 +196,22 @@ const Section02 = () => {
   };
 
   const dynamicEditInput = () => {
-    return (<>
-    <Input value={rows[rowSelectionModel[0] -1].id}></Input>
-    <Input value={rows[rowSelectionModel[0] -1].firstName}></Input>
-    <Input value={rows[rowSelectionModel[0] -1].lastName}></Input>
-    <Input value={rows[rowSelectionModel[0] -1].COMPANY_CODE}></Input>
-    <Button variant="contained">SUBMIT</Button>
-    <Button variant="contained">CANCEL</Button>
-    </>)
-  }
+    return (
+      <>
+        <Input value={editableid} onChange={(e) => setEditableid(e.value)}></Input>
+        <Input value={firstName} onChange={(e) => setFirstName(e.value)}></Input>
+        <Input value={lastname} onChange={(e) => setLastname(e.value)}></Input>
+        <Input value={"COMPANY_CODE"}></Input>
+        <Button variant="contained">SUBMIT</Button>
+        <Button onClick={handleClose} variant="contained">
+          CANCEL
+        </Button>
+      </>
+    );
+  };
 
   return (
-    <Box height={"90vh"} width={'100vw'} sx={{ padding: "0 7px" }}>
+    <Box height={"90vh"} width={"100vw"} sx={{ padding: "0 7px" }}>
       <div>
         <Modal
           open={open}
@@ -206,7 +221,9 @@ const Section02 = () => {
         >
           <Box sx={modleStyle}>
             <Typography variant="h5">EDIT</Typography>
-            {rowSelectionModel.length > 0 ?  dynamicEditInput(): console.log("first")}
+            {rowSelectionModel.length > 0
+              ? dynamicEditInput()
+              : console.log("first")}
           </Box>
         </Modal>
       </div>
