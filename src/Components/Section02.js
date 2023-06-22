@@ -12,6 +12,17 @@ function a11yProps(index) {
 const Section02 = () => {
   const [value, setValue] = useState(0); // not in use
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
+  const [rows, setrows] = useState([
+    { id: 1, lastName: "Snow", firstName: "Jon", COMPANY_CODE: 3500000000 },
+    { id: 2, lastName: "Lannister", firstName: "Cersei", COMPANY_CODE: 42 },
+    { id: 3, lastName: "Lannister", firstName: "Jaime", COMPANY_CODE: 45 },
+    { id: 4, lastName: "Stark", firstName: "Arya", COMPANY_CODE: 16 },
+    { id: 5, lastName: "Targaryen", firstName: "Daenerys", COMPANY_CODE: null },
+    { id: 6, lastName: "Melisandre", firstName: null, COMPANY_CODE: 150 },
+    { id: 7, lastName: "Clifford", firstName: "Ferrara", COMPANY_CODE: 44 },
+    { id: 8, lastName: "Frances", firstName: "Rossini", COMPANY_CODE: 36 },
+    { id: 9, lastName: "Roxie", firstName: "Harvey", COMPANY_CODE: 65 },
+  ]);
 
   const columns = [
     { field: "id", headerName: "ID", width: 90 },
@@ -45,20 +56,16 @@ const Section02 = () => {
     },
   ];
 
-  const rows = [
-    { id: 1, lastName: "Snow", firstName: "Jon", COMPANY_CODE: 3500000000 },
-    { id: 2, lastName: "Lannister", firstName: "Cersei", COMPANY_CODE: 42 },
-    { id: 3, lastName: "Lannister", firstName: "Jaime", COMPANY_CODE: 45 },
-    { id: 4, lastName: "Stark", firstName: "Arya", COMPANY_CODE: 16 },
-    { id: 5, lastName: "Targaryen", firstName: "Daenerys", COMPANY_CODE: null },
-    { id: 6, lastName: "Melisandre", firstName: null, COMPANY_CODE: 150 },
-    { id: 7, lastName: "Clifford", firstName: "Ferrara", COMPANY_CODE: 44 },
-    { id: 8, lastName: "Frances", firstName: "Rossini", COMPANY_CODE: 36 },
-    { id: 9, lastName: "Roxie", firstName: "Harvey", COMPANY_CODE: 65 },
-  ];
-
   const handleChange = (event, newValue) => {
     setValue(newValue); // not in use
+  };
+
+  const handleDelete = () => {
+    let updatedRows = rows.filter(
+      (row) => !rowSelectionModel.includes(row.id)
+    );
+    setrows(updatedRows);
+    setRowSelectionModel([]);
   };
 
   const Footer = () => {
@@ -78,13 +85,15 @@ const Section02 = () => {
         </Button>
         <Button
           sx={{ margin: "0px 0px 20px 8px", backgroundColor: "#fc7500" }}
-          variant="contained" disabled={rowSelectionModel.length !== 1}
+          variant="contained"
+          disabled={rowSelectionModel.length !== 1}
         >
           EDIT
         </Button>
         <Button
           sx={{ margin: "0px 0px 20px 8px", backgroundColor: "#fc7500" }}
           variant="contained"
+          onClick={() => handleDelete()}
         >
           DELETE
         </Button>
