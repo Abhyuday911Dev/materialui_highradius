@@ -1,4 +1,4 @@
-import { Box, Button, Pagination, Tab, Tabs } from "@mui/material";
+import { Box, Button, Pagination, Tab, Tabs, Typography } from "@mui/material";
 import {
   DataGrid,
   GridToolbarQuickFilter,
@@ -7,14 +7,60 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import React, { useState } from "react";
+import Modal from "@mui/material/Modal";
 import { useGridApiContext } from "@mui/x-data-grid";
-import Model from "./Model";
+import { Input } from "@mui/base";
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
+
+const modleStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "4px solid #fc7500",
+  borderRadius: "8px",
+  boxShadow: 24,
+  p: 1,
+};
+
+const columns = [
+  { field: "id", headerName: "ID", width: 90 },
+  {
+    field: "firstName",
+    headerName: "First name",
+    // width: 150,
+    // editable: true,
+  },
+  {
+    field: "lastName",
+    headerName: "Last name",
+    // width: 150,
+    // editable: true,
+  },
+  {
+    field: "COMPANY_CODE",
+    headerName: "COMPANY_CODE",
+    type: "number",
+    // width: 170,
+    // editable: true,
+  },
+  {
+    field: "fullName",
+    headerName: "Full name",
+    description: "This column has a value getter and is not sortable.",
+    sortable: false,
+    // width: 160,
+    valueGetter: (params) =>
+      `${params.row.firstName || ""} ${params.row.lastName || ""}`,
+  },
+];
 
 const Section02 = () => {
   const [value, setValue] = useState(0); // not in use
@@ -29,49 +75,27 @@ const Section02 = () => {
     { id: 7, lastName: "Clifford", firstName: "Ferrara", COMPANY_CODE: 44 },
     { id: 8, lastName: "Frances", firstName: "Rossini", COMPANY_CODE: 36 },
     { id: 9, lastName: "Roxie", firstName: "Harvey", COMPANY_CODE: 65 },
+    { id: 10, lastName: "Roxie", firstName: "Harvey", COMPANY_CODE: 65 },
+    { id: 11, lastName: "Roxie", firstName: "Harvey", COMPANY_CODE: 65 },
+    { id: 12, lastName: "Roxie", firstName: "Harvey", COMPANY_CODE: 65 },
+    { id: 13, lastName: "Roxie", firstName: "Harvey", COMPANY_CODE: 65 },
+    { id: 14, lastName: "Roxie", firstName: "Harvey", COMPANY_CODE: 65 },
+    { id: 15, lastName: "Roxie", firstName: "Harvey", COMPANY_CODE: 65 },
+    { id: 16, lastName: "Roxie", firstName: "Harvey", COMPANY_CODE: 65 },
   ]);
-
-  let foundObject = rows[0];
-
+  const [editableid, setEditableid] = useState([]);
+  const [firstName, setFirstName] = useState([]);
+  const [lastname, setLastname] = useState([]);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => {
-    foundObject = rows.find((obj) => obj.id === rowSelectionModel[0]);
+    const foundObject = rows.find((obj) => obj.id === rowSelectionModel[0]);
+    setEditableid(foundObject.id);
+    setFirstName(foundObject.firstName);
+    setLastname(foundObject.lastName);
     setOpen(true);
   };
 
-  const handleCancle = () => setOpen(false);
-
-  const columns = [
-    { field: "id", headerName: "ID", width: 90 },
-    {
-      field: "firstName",
-      headerName: "First name",
-      width: 150,
-      editable: true,
-    },
-    {
-      field: "lastName",
-      headerName: "Last name",
-      width: 150,
-      editable: true,
-    },
-    {
-      field: "COMPANY_CODE",
-      headerName: "COMPANY_CODE",
-      type: "number",
-      width: 170,
-      editable: true,
-    },
-    {
-      field: "fullName",
-      headerName: "Full name",
-      description: "This column has a value getter and is not sortable.",
-      sortable: false,
-      width: 160,
-      valueGetter: (params) =>
-        `${params.row.firstName || ""} ${params.row.lastName || ""}`,
-    },
-  ];
+  const handleClose = () => setOpen(false);
 
   const handleChange = (event, newValue) => {
     setValue(newValue); // not in use
@@ -132,10 +156,9 @@ const Section02 = () => {
       />
     );
   }
-
   const Footer = () => {
     return (
-      <div
+      <Box
         style={{
           display: "flex",
           justifyContent: "space-between",
@@ -143,15 +166,15 @@ const Section02 = () => {
           marginTop: "8px",
         }}
       >
-        <Box pb={2}>
+        <Box >
           <Button
-            sx={{ margin: "0px 0px 0px 15px", backgroundColor: "#fc7500" }}
+            sx={{ margin: "0px 0px 5px 15px", backgroundColor: "#fc7500" }}
             variant="contained"
           >
             REFRESH DATA
           </Button>
           <Button
-            sx={{ margin: "0px 0px 0px 8px", backgroundColor: "#fc7500" }}
+            sx={{ margin: "0px 0px 5px 8px", backgroundColor: "#fc7500" }}
             variant="contained"
             disabled={rowSelectionModel.length !== 1}
             onClick={handleOpen}
@@ -159,32 +182,62 @@ const Section02 = () => {
             EDIT
           </Button>
           <Button
-            sx={{ margin: "0px 0px 0px 8px", backgroundColor: "#fc7500" }}
+            sx={{ margin: "0px 0px 5px 8px", backgroundColor: "#fc7500" }}
             variant="contained"
             onClick={() => handleDelete()}
           >
             DELETE
           </Button>
           <Button
-            sx={{ margin: "0px 0px 0px 8px", backgroundColor: "#fc7500" }}
+            sx={{ margin: "0px 0px 5px 8px", backgroundColor: "#fc7500" }}
             variant="contained"
           >
             PREDICT
           </Button>
         </Box>
         {CustomPagination()}
-      </div>
+      </Box>
+    );
+  };
+
+  const dynamicEditInput = () => {
+    return (
+      <>
+        <Input
+          value={editableid}
+          onChange={(e) => setEditableid(e.value)}
+        ></Input>
+        <Input
+          value={firstName}
+          onChange={(e) => setFirstName(e.value)}
+        ></Input>
+        <Input value={lastname} onChange={(e) => setLastname(e.value)}></Input>
+        <Input value={"COMPANY_CODE"}></Input>
+        <Button variant="contained">SUBMIT</Button>
+        <Button onClick={handleClose} variant="contained">
+          CANCEL
+        </Button>
+      </>
     );
   };
 
   return (
     <Box height={"90vh"} width={"100vw"} sx={{ padding: "0 7px" }}>
-      <Model
-        handleCancle={handleCancle}
-        open={open}
-        rowSelectionModel={rowSelectionModel}
-        id = {foundObject.id}
-      />
+      <div>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={modleStyle}>
+            <Typography variant="h5">EDIT</Typography>
+            {rowSelectionModel.length > 0
+              ? dynamicEditInput()
+              : console.log("first")}
+          </Box>
+        </Modal>
+      </div>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -196,7 +249,7 @@ const Section02 = () => {
             },
           },
           pagination: {
-            paginationModel: { pageSize: 2, page: 0 },
+            paginationModel: { pageSize:10, page: 0 },
           },
         }}
         checkboxSelection
