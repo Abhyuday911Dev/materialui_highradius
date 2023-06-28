@@ -1,4 +1,4 @@
-import { Box, Button, Pagination, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Button, Pagination, Tab, Tabs } from "@mui/material";
 import {
   DataGrid,
   GridToolbarQuickFilter,
@@ -7,28 +7,14 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import React, { useState } from "react";
-import Modal from "@mui/material/Modal";
 import { useGridApiContext } from "@mui/x-data-grid";
-import { Input } from "@mui/base";
+import Model from "./Model";
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
-
-const modleStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "4px solid #fc7500",
-  borderRadius: "8px",
-  boxShadow: 24,
-  p: 1,
-};
 
 const Section02 = () => {
   const [value, setValue] = useState(0); // not in use
@@ -44,20 +30,16 @@ const Section02 = () => {
     { id: 8, lastName: "Frances", firstName: "Rossini", COMPANY_CODE: 36 },
     { id: 9, lastName: "Roxie", firstName: "Harvey", COMPANY_CODE: 65 },
   ]);
-  const [editableid, setEditableid] = useState([]);
-  const [firstName, setFirstName] = useState([]);
-  const [lastname, setLastname] = useState([]);
+
+  let foundObject = rows[0];
+
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => {
-
-    const foundObject = rows.find((obj) => obj.id === rowSelectionModel[0]);
-    setEditableid(foundObject.id);
-    setFirstName(foundObject.firstName);
-    setLastname(foundObject.lastName);
+    foundObject = rows.find((obj) => obj.id === rowSelectionModel[0]);
     setOpen(true);
   };
 
-  const handleClose = () => setOpen(false);
+  const handleCancle = () => setOpen(false);
 
   const columns = [
     { field: "id", headerName: "ID", width: 90 },
@@ -195,38 +177,14 @@ const Section02 = () => {
     );
   };
 
-  const dynamicEditInput = () => {
-    return (
-      <>
-        <Input value={editableid} onChange={(e) => setEditableid(e.value)}></Input>
-        <Input value={firstName} onChange={(e) => setFirstName(e.value)}></Input>
-        <Input value={lastname} onChange={(e) => setLastname(e.value)}></Input>
-        <Input value={"COMPANY_CODE"}></Input>
-        <Button variant="contained">SUBMIT</Button>
-        <Button onClick={handleClose} variant="contained">
-          CANCEL
-        </Button>
-      </>
-    );
-  };
-
   return (
     <Box height={"90vh"} width={"100vw"} sx={{ padding: "0 7px" }}>
-      <div>
-        <Modal
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={modleStyle}>
-            <Typography variant="h5">EDIT</Typography>
-            {rowSelectionModel.length > 0
-              ? dynamicEditInput()
-              : console.log("first")}
-          </Box>
-        </Modal>
-      </div>
+      <Model
+        handleCancle={handleCancle}
+        open={open}
+        rowSelectionModel={rowSelectionModel}
+        id = {foundObject.id}
+      />
       <DataGrid
         rows={rows}
         columns={columns}
